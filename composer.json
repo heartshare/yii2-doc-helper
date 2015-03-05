@@ -1,0 +1,23 @@
+{
+	"name": "infiniteCascade/yii2-doc-helper",
+	"description": "Fill in template variables in code docblocks",
+	"keywords": ["yii2", "docblock"],
+	"type": "yii2-extension",
+	"license": "BSD-3-Clause",
+	"authors": [
+		{
+			"name": "Jacob Morrison",
+			"email": "jacob@infinitecascade.com"
+		}
+	],
+	"require": {
+		"yiisoft/yii2": "2.0.*",
+		"infiniteCascade/yii2-infinite-core": "*"
+	},
+	"autoload": {
+		"psr-4": { "infinite\\docHelper\\": "lib" }
+	},
+	"extra": {
+		"bootstrap": "infinite\\docHelper\\Bootstrap"
+	}
+}
