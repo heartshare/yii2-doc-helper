@@ -72,7 +72,6 @@ class Module extends \yii\base\Module
             $scan = new Scan;
             $scan->project = $this->lastProject;
             $scan->files;
-            echo "rescanned";
             file_put_contents($this->getScanPath(), serialize($scan));
             return $scan;
         }

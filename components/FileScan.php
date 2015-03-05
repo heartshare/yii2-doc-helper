@@ -31,7 +31,7 @@ class FileScan extends Component
                     $matches = array_unique($lineMatches[0]);
                 }
                 if (!empty($matches)) {
-                    $this->_results[$lineKey] = $matches;
+                    $this->_results[$lineKey] = ['line' => $line, 'matches' => $matches];
                     $this->foundCount = $this->foundCount + count($matches);
                 }
             }
