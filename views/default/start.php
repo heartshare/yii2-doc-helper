@@ -13,7 +13,7 @@ if ($scan->isScanned) {
 	} else {
 		echo Html::beginTag('div', ['class' => 'list-group']);
 		foreach ($scanResults as $fileScan) {
-			$extra = Html::tag('span', $fileScan->foundCount, ['class' => 'badge']);
+			$extra = Html::tag('span', $fileScan->totalBlanks, ['class' => 'badge']);
 			echo Html::tag('div', $fileScan->file . $extra, ['class' => 'list-group-item']);
 		}
 		echo Html::endTag('div');

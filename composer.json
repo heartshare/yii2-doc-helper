@@ -13,7 +13,8 @@
 	"require": {
 		"yiisoft/yii2": "2.0.*",
 		"infiniteCascade/yii2-infinite-core": "*",
-		"nette/reflection": "*"
+		"nette/reflection": "*",
+		"bower-asset/codemirror": "*"
 	},
 	"autoload": {
 		"psr-4": { "infinite\\docHelper\\": "" }

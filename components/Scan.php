@@ -25,6 +25,7 @@ class Scan extends Component
         }
         return false;
     }
+
     public function getFileScans()
     {
         if (!$this->isScanned) {
@@ -37,6 +38,38 @@ class Scan extends Component
             }
         }
         return $scans;
+    }
+
+    public function getTotalBlanks()
+    {
+        $total = 0;
+        if (!$this->fileScans) { return 0; }
+        foreach ($this->fileScans as $scan) {
+            if (!$scan) { continue; }
+            $total += $scan->totalBlanks;
+        }
+        return $total;
+    }
+
+
+    public function getFilledBlanks()
+    {
+        $filled = 0;
+        if (!$this->fileScans) { return 0; }
+        foreach ($this->fileScans as $scan) {
+            if (!$scan) { continue; }
+            $filled += $scan->filledBlanks;
+        }
+        return $filled;
+    }
+
+    public function getPercentCompleted()
+    {
+        $total = $this->totalBlanks;
+        if (empty($total)) {
+            return 0;
+        }
+        return round(($this->filledBlanks / $total) * 100);
     }
 
     public function scan($limit = false)
