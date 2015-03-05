@@ -29,8 +29,9 @@ NavBar::begin([
 echo Nav::widget([
     'options' => ['class' => 'nav navbar-nav navbar-right'],
     'items' => [
-        ['label' => 'Home', 'url' => ['default/index']],
-        ['label' => 'Application', 'url' => Yii::$app->homeUrl],
+        ['label' => 'Resume', 'url' => ['default/resume'], 'visible' => !empty(Yii::$app->getModule('docHelper')->scan) && Yii::$app->getModule('docHelper')->scan->isScanned],
+        ['label' => 'Create Project', 'url' => ['default/create-project']],
+        ['label' => 'Start Scan', 'url' => ['default/start'], 'visible' => !empty(Yii::$app->getModule('docHelper')->scan)],
     ],
 ]);
 NavBar::end();
