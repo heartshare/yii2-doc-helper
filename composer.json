@@ -15,7 +15,7 @@
 		"infiniteCascade/yii2-infinite-core": "*"
 	},
 	"autoload": {
-		"psr-4": { "infinite\\docHelper\\": "lib" }
+		"psr-4": { "infinite\\docHelper\\": "" }
 	},
 	"extra": {
 		"bootstrap": "infinite\\docHelper\\Bootstrap"
