@@ -37,7 +37,7 @@ class DefaultController extends Controller
     public function actionResume()
     {
         $params = [];
-        if (!($params['scan'] = Yii::$app->getModule('docHelper')->getScan())) {
+        if (!($params['scan'] = $scan = Yii::$app->getModule('docHelper')->getScan())) {
             return $this->redirect(['start']);
         }
         if (empty($_GET['file']) || empty($params['scan']->fileScans[$_GET['file']]) || empty($params['scan']->fileScans[$_GET['file']]->results)) {
@@ -51,7 +51,6 @@ class DefaultController extends Controller
         if (!empty($_POST) && isset($_POST['Blank'][$fileScan->hash])) {
             foreach ($fileScan->results as $segment) {
                 if (!isset($_POST['Blank'][$fileScan->hash][$segment->id])) {
-                    \d("no segment post");
                     continue;
                 }
                 $globalSegmentPost = isset($_POST['Global'][$fileScan->hash][$segment->id]) ? $_POST['Global'][$fileScan->hash][$segment->id] : [];
@@ -67,7 +66,7 @@ class DefaultController extends Controller
                     $globalLinePost = isset($globalSegmentPost[$lineKey]) ? $globalSegmentPost[$lineKey] : [];
                     if (isset($segment->scanResults[$lineKey])) {
                         foreach ($segment->scanResults[$lineKey] as $matchId => $match) {
-                            if (!isset($linePost[$matchId])) {
+                            if (empty($linePost[$matchId])) {
                                 continue;
                             }
                             $matchValue = $linePost[$matchId];
@@ -75,11 +74,15 @@ class DefaultController extends Controller
                             if (!$segment->resolveMatch($lineNumber, $lineKey, $matchId, $matchValue)) {
                                 \d(['boom', $matchValue]);exit;
                             }
+                            if ($globalValue) {
+                                $scan->globalValues[$match] = $matchValue;
+                            }
                         }
                     }
                     $lineNumber++;
                 }
             }
+            Yii::$app->getModule('docHelper')->saveScan($params['scan']);
             return $this->redirect(['resume']);
         }
 

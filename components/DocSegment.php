@@ -61,11 +61,12 @@ class DocSegment extends FileSegment
             foreach ($this->contentArray as $line) {
                 $lineKey = md5($lineNumber);
                 $lineMatches = $matches = [];
-                preg_match_all($this->project->templateVariableQuery, $line, $lineMatches, PREG_SET_ORDER);
+                preg_match_all($this->project->templateVariableQuery, $line, $lineMatches); //, PREG_SET_ORDER
                 if (!empty($lineMatches[0])) {
                     $matches = array_unique($lineMatches[0]);
                 }
                 if (!empty($matches)) {
+                    //\d($lineMatches);
                     $this->_results[$lineKey] = [];
                     $id = 0;
                     foreach ($matches as $match) {

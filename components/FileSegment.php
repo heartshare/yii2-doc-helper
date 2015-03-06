@@ -42,7 +42,7 @@ class FileSegment extends Object
     {
         $contents = preg_split("/\\r\\n|\\r|\\n/", file_get_contents($this->file, true));
         $contents[$lineNumber] = $newLine;
-        return file_put_contents($this->file, implode("\n", $contents));
+        return file_put_contents($this->file, implode("\n", $contents)) !== false;
     }
 
     public function getContentArray()

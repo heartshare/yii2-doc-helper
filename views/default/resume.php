@@ -4,7 +4,7 @@ use yii\widgets\ActiveForm;
 use yii\bootstrap\Progress;
 $percent = $scan->percentCompleted;
 $form = ActiveForm::begin(['id' => "fill-form"]);
-
+//\d(unserialize(serialize($scan)));exit;
 echo Progress::widget([
       'percent' => $percent,
       'label' => $percent.'% Complete ('. $scan->filledBlanks .'/'. $scan->totalBlanks.')',
@@ -14,7 +14,8 @@ echo Progress::widget([
 $this->title = $fileScan->title;
 echo Html::tag('h3', $fileScan->title);
 $asset = infinite\docHelper\components\CodeMirrorAsset::register($this);
-
+echo Html::textarea('code', file_get_contents($fileScan->file), ['class' => 'codemirror infinite-dochelper-code-context',  'style' => 'height: 100px']);
+echo '<br /><br />';
 foreach ($fileScan->results as $segment) {
 	echo Html::beginTag('div', ['class' => 'panel panel-default']);
 	echo Html::beginTag('div', ['class' => 'panel-heading']);
@@ -34,7 +35,11 @@ foreach ($fileScan->results as $segment) {
 				$inputName = '['. $fileScan->hash .']['. $segment->id .']['. $lineKey . ']['. $matchId .']';
 				$inputValue = '';
 				$options = ['class' => 'infinite-dochelper-blank form-control', 'placeholder' => $placeholder, 'title' => $placeholder];
-				$options['data-autogrow'] = json_encode(['maxWidth' => 500]);
+				if (isset($scan->globalValues[$match])) {
+					$inputValue = $scan->globalValues[$match];
+					Html::addCssClass($options, 'global-value');
+				}
+				$options['data-autogrow'] = json_encode(['maxWidth' => 600, 'minWidth' => 300]);
 				$globalElement = Html::checkbox('Global'.$inputName, false, ['title' => 'Make this value the default for '.$placeholder]);
 				$inputElement = Html::input('text', 'Blank'.$inputName, $inputValue, $options);
 				$replaceText = Html::beginTag('div', ['class'=>'input-group input-group-inline']);
@@ -49,7 +54,7 @@ foreach ($fileScan->results as $segment) {
 		$lineNumber++;
 	}
 	echo Html::endTag('div');
-	echo Html::textarea('code', $segment->context->content, ['class' => 'codemirror infinite-dochelper-code-context', 'disabled' => 'disabled', 'style' => 'height: 100px']);
+	echo Html::textarea('code', $segment->context->content, ['class' => 'codemirror infinite-dochelper-code-context',  'style' => 'height: 100px']);
 	echo Html::endTag('div');
 	echo Html::endTag('div');
 }

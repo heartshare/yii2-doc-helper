@@ -8,9 +8,12 @@ $(function() {
 			theme: 'base16-dark',
 			readOnly: true,
 			foldGutter: true,
+			//viewportMargin: 'Infinity',
     		gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
 		});
-		//editor.foldCode(CodeMirror.Pos(1, 0), {'scanUp': true});
+		// if ($(this).val().split(/\r*\n/).length > 1) {
+		// 	editor.foldCode(CodeMirror.Pos(1, 0), {'scanUp': true});
+		// }
 	});
 
 	/* from: http://jsbin.com/ahaxe */

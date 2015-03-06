@@ -7,8 +7,12 @@ body {
 }
 
 .infinite-dochelper-blank {
-	width: 250px;
+	width: 300px;
 	line-height: 1.2em;
+}
+
+.infinite-dochelper-blank.global-value {
+	background-color: #cce5cc;
 }
 
 .infinite-dochelper-doc-block {
@@ -27,9 +31,9 @@ body {
 
 
 .CodeMirror {
-  border: 1px solid #eee;
+/*  border: 1px solid #eee;
   height: auto;
-  max-height: 300px;
+  max-height: 300px;*/
 }
 
 .input-group-inline {

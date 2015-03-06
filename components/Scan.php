@@ -9,6 +9,7 @@ class Scan extends Component
 {
     public $module;
     public $project;
+    public $globalValues = [];
     protected $_files;
     protected $_timestamp;
     protected $_fileScans = [];

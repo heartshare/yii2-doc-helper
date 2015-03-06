@@ -92,7 +92,7 @@ class FileScan extends Component
 
                         $docComment = $property->getDocComment();
                         $docCommentSize = count(explode(PHP_EOL, $docComment));
-                        $contextStartLine = $startLine;
+                        $contextStartLine = $startLine-1;
                         $contextEndLine = $startLine;
                         if (empty($docComment)) {
                             $docCommentSize = 0;
