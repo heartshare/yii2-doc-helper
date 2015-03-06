@@ -1,3 +1,45 @@
 body {
     padding-top: 70px;
 }
+.infinite-dochelper-code-context {
+	height: 100px;
+	width: 100%;
+}
+
+.infinite-dochelper-blank {
+	width: 250px;
+	line-height: 1.2em;
+}
+
+.infinite-dochelper-doc-block {
+	padding: 5px;
+	margin: 0 0 5px;
+	background-color: #f9f9f9;
+}
+
+.infinite-dochelper-doc-block .line {
+	line-height: 2em;
+	font-weight: 500;
+}
+.infinite-dochelper-doc-block .line:hover {
+	background-color: #c7c7c7;
+}
+
+
+.CodeMirror {
+  border: 1px solid #eee;
+  height: auto;
+  max-height: 300px;
+}
+
+.input-group-inline {
+    display: inline-table;
+    vertical-align: middle;
+    width: auto;
+}
+
+.input-group-inline .input-group-addon,
+.input-group-inline .input-group-btn,
+.input-group-inline .form-control {
+        width: auto;
+    }

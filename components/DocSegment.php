@@ -5,10 +5,11 @@ use yii\base\Object;
 
 class DocSegment extends FileSegment
 {
-    public $type;
+    public $title;
     public $fileScan;
     public $context;
     public $totalBlanks = 0;
+    public $filledBlanks = 0;
     protected $_results;
 
     public function __sleep()
@@ -25,9 +26,33 @@ class DocSegment extends FileSegment
 
     public function getId()
     {
-        return md5(json_encode([$this->file, $this->type, $this->startLine, $this->endLine]));
+        return md5(json_encode([$this->file, $this->title, $this->startLine, $this->endLine]));
+    }
+    
+    public function resolveMatch($lineNumber, $lineId, $matchId, $resolution)
+    {
+        if (isset($this->scanResults[$lineId]) && isset($this->scanResults[$lineId][$matchId])) {
+            $line = $this->scanResults[$lineId];
+            $match = $this->scanResults[$lineId][$matchId];
+            $currentLine = $this->getLine($lineNumber);
+            $newLine = strtr($currentLine, [$match => $resolution]);
+            if (!$this->replaceLine($lineNumber, $newLine)) {
+                return false;
+            }
+            unset($this->_results[$lineId][$matchId]);
+            if (empty($this->_results[$lineId])) {
+                unset($this->_results[$lineId]);
+            }
+        }
+        return $this->markResolved();
     }
 
+    public function markResolved()
+    {
+        $this->filledBlanks++;
+        $this->fileScan->filledBlanks++;
+        return true;
+    }
     public function getScanResults()
     {
         if (!isset($this->_results)) {
@@ -41,7 +66,13 @@ class DocSegment extends FileSegment
                     $matches = array_unique($lineMatches[0]);
                 }
                 if (!empty($matches)) {
-                    $this->_results[$lineKey] = ['line' => $lineNumber, 'matches' => $matches];
+                    $this->_results[$lineKey] = [];
+                    $id = 0;
+                    foreach ($matches as $match) {
+                        $idKey = md5($id.$match);
+                        $this->_results[$lineKey][$idKey] = $match;
+                        $id++;
+                    }
                     $this->totalBlanks = $this->totalBlanks + count($matches);
                 }
                 $lineNumber++;

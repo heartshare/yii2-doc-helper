@@ -60,7 +60,7 @@ class FileScan extends Component
                     }
                     if ($docComment) {
                         $contextFileSegment = $this->getFileSegment($contextStartLine, $contextEndLine);
-                        $docSegment = $this->getDocSegment('class', $docStartLine, $docEndLine, $contextFileSegment);
+                        $docSegment = $this->getDocSegment('Class ' . $className, $docStartLine, $docEndLine, $contextFileSegment);
                         if ($docSegment->scanResults) {
                             $this->totalBlanks = $this->totalBlanks + $docSegment->totalBlanks;
                             $this->_results[$docSegment->id] = $docSegment;
@@ -68,16 +68,32 @@ class FileScan extends Component
                         $docCommentFull = $docComment;
                     }
 
-                    // Method DocBlocks
-                        $lastGoodComment = null;
-                    foreach ($ref->getMethods() as $method) {
-                        if (strtolower($method->getFileName()) != strtolower($this->file)) {
+                    // Property DocBlocks
+                    $fileContentArray = preg_split("/\\r\\n|\\r|\\n/", $fileContent);
+                    foreach ($ref->getProperties() as $property) {
+                        $startLine = false;
+                        // \d(explode("\n", file_get_contents($file)));
+                        foreach ($fileContentArray as $line => $content) {
+                            if (preg_match(
+                                '/
+                                    (private|protected|public|var|static|const) # match visibility or var
+                                    \s                             # followed 1 whitespace
+                                    [\$]?' . $property->getName() . '                          # followed by the var name $bar
+                                    [\s|\;]
+                                /x',
+                                $content)
+                            ) {
+                                $startLine = $line + 1;
+                            }
+                        }
+                        if (!$startLine) {
                             continue;
                         }
-                        $docComment = $method->getDocComment();
+
+                        $docComment = $property->getDocComment();
                         $docCommentSize = count(explode(PHP_EOL, $docComment));
-                        $contextStartLine = $method->getStartLine()-1;
-                        $contextEndLine = $method->getEndLine();
+                        $contextStartLine = $startLine;
+                        $contextEndLine = $startLine;
                         if (empty($docComment)) {
                             $docCommentSize = 0;
                             $docComment = false;
@@ -88,7 +104,36 @@ class FileScan extends Component
                         }
                         if ($docComment) {
                             $contextFileSegment = $this->getFileSegment($contextStartLine, $contextEndLine);
-                            $docSegment = $this->getDocSegment('method', $docStartLine, $docEndLine, $contextFileSegment);
+                            $docSegment = $this->getDocSegment('Property ' . $property->getName(), $docStartLine, $docEndLine, $contextFileSegment);
+
+                            if ($docSegment->scanResults) {
+                                $this->totalBlanks = $this->totalBlanks + $docSegment->totalBlanks;
+                                $this->_results[$docSegment->id] = $docSegment;
+                            }
+                        }
+                    }
+
+                    // Method DocBlocks
+                    $lastGoodComment = null;
+                    foreach ($ref->getMethods() as $property) {
+                        if (strtolower($property->getFileName()) != strtolower($this->file)) {
+                            continue;
+                        }
+                        $docComment = $property->getDocComment();
+                        $docCommentSize = count(explode(PHP_EOL, $docComment));
+                        $contextStartLine = $property->getStartLine()-1;
+                        $contextEndLine = $property->getEndLine();
+                        if (empty($docComment)) {
+                            $docCommentSize = 0;
+                            $docComment = false;
+                            continue;
+                        } else {
+                            $docEndLine = $contextStartLine;
+                            $docStartLine = $docEndLine - $docCommentSize;
+                        }
+                        if ($docComment) {
+                            $contextFileSegment = $this->getFileSegment($contextStartLine, $contextEndLine);
+                            $docSegment = $this->getDocSegment('Method ' . $property->getName(), $docStartLine, $docEndLine, $contextFileSegment);
 
                             if ($docSegment->scanResults) {
                                 $this->totalBlanks = $this->totalBlanks + $docSegment->totalBlanks;
@@ -111,9 +156,9 @@ class FileScan extends Component
         return new FileSegment(['file' => $this->file, 'startLine' => $start, 'endLine' => $end]);
     }
 
-    public function getDocSegment($type, $start, $end, $context)
+    public function getDocSegment($title, $start, $end, $context)
     {
-        return new DocSegment(['file' => $this->file, 'startLine' => $start, 'endLine' => $end, 'context' => $context, 'type' => $type, 'fileScan' => $this]);
+        return new DocSegment(['file' => $this->file, 'startLine' => $start, 'endLine' => $end, 'context' => $context, 'title' => $title, 'fileScan' => $this]);
     }
 
     public function getProject()

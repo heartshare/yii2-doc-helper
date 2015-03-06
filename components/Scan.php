@@ -17,7 +17,7 @@ class Scan extends Component
     {
         if ($this->fileScans) {
             foreach ($this->fileScans as $key => $scan) {
-                if (!$scan || $scan->filled) {
+                if (!$scan || $scan->filled || empty($scan->results)) {
                     continue;
                 }
                 return $key;

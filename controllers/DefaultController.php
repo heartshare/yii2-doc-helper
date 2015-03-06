@@ -40,14 +40,49 @@ class DefaultController extends Controller
         if (!($params['scan'] = Yii::$app->getModule('docHelper')->getScan())) {
             return $this->redirect(['start']);
         }
-        if (empty($_GET['file']) || empty($params['scan']->fileScans[$_GET['file']])) {
+        if (empty($_GET['file']) || empty($params['scan']->fileScans[$_GET['file']]) || empty($params['scan']->fileScans[$_GET['file']]->results)) {
             $nextFile = $params['scan']->nextFileScan;
             if (!$nextFile) {
                 return $this->render('done');
             }
             return $this->redirect(['resume', 'file' => $nextFile]);
         }
-        $params['fileScan'] = $params['scan']->fileScans[$_GET['file']];
+        $params['fileScan'] = $fileScan = $params['scan']->fileScans[$_GET['file']];
+        if (!empty($_POST) && isset($_POST['Blank'][$fileScan->hash])) {
+            foreach ($fileScan->results as $segment) {
+                if (!isset($_POST['Blank'][$fileScan->hash][$segment->id])) {
+                    \d("no segment post");
+                    continue;
+                }
+                $globalSegmentPost = isset($_POST['Global'][$fileScan->hash][$segment->id]) ? $_POST['Global'][$fileScan->hash][$segment->id] : [];
+                $segmentPost = $_POST['Blank'][$fileScan->hash][$segment->id];
+                $lineNumber = $segment->startLine;
+                foreach ($segment->contentArray as $line) {
+                    $lineKey = md5($lineNumber);
+                    if (!isset($segmentPost[$lineKey])) {
+                        $lineNumber++;
+                        continue;
+                    }
+                    $linePost = $segmentPost[$lineKey];
+                    $globalLinePost = isset($globalSegmentPost[$lineKey]) ? $globalSegmentPost[$lineKey] : [];
+                    if (isset($segment->scanResults[$lineKey])) {
+                        foreach ($segment->scanResults[$lineKey] as $matchId => $match) {
+                            if (!isset($linePost[$matchId])) {
+                                continue;
+                            }
+                            $matchValue = $linePost[$matchId];
+                            $globalValue = !empty($globalLinePost[$matchId]) ? true : false;
+                            if (!$segment->resolveMatch($lineNumber, $lineKey, $matchId, $matchValue)) {
+                                \d(['boom', $matchValue]);exit;
+                            }
+                        }
+                    }
+                    $lineNumber++;
+                }
+            }
+            return $this->redirect(['resume']);
+        }
+
         return $this->render('resume', $params);
     }
 
