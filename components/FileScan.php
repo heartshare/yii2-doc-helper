@@ -33,6 +33,9 @@ class FileScan extends Component
 
         if ($refresh || !isset($this->_results)) {
             $this->_results = [];
+            $this->totalBlanks = 0;
+            $this->filledBlanks = 0;
+
             $fileContent = file_get_contents($this->file);
             $classes = AnnotationsParser::parsePhp($fileContent);
 

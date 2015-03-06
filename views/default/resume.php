@@ -39,7 +39,7 @@ foreach ($fileScan->results as $segment) {
 					$inputValue = $scan->globalValues[$match];
 					Html::addCssClass($options, 'global-value');
 				}
-				$options['data-autogrow'] = json_encode(['maxWidth' => 600, 'minWidth' => 300]);
+				$options['data-autogrow'] = json_encode(['maxWidth' => 600, 'minWidth' => 300, 'comfortZone' => 150]);
 				$globalElement = Html::checkbox('Global'.$inputName, false, ['title' => 'Make this value the default for '.$placeholder]);
 				$inputElement = Html::input('text', 'Blank'.$inputName, $inputValue, $options);
 				$replaceText = Html::beginTag('div', ['class'=>'input-group input-group-inline']);
